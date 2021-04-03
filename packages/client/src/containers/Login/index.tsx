@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { LoginProvider, LoginProps } from 'context/Login';
+import { Body } from 'typography';
 
 const Button = styled.Button`
 `;
@@ -12,18 +13,24 @@ const Wrapper = styled.SafeAreaView`
   background: #fff;
 `;
 
+const Input = styled.TextInput`
+`;
 
-const LoginScreen: React.FC<LoginProps> = ({ login }) => (
-  <Wrapper>
-    <Button title="Login" onPress={login} />
-  </Wrapper>
-);
+
+const LoginScreen: React.FC<LoginProps> = ({ login, error }) => {
+  const [url, setUrl] = useState('');
+  return (
+    <Wrapper>
+      {error && <Body>{error.toString()}</Body>}
+      <Input placeholder="Server url" value={url} onChangeText={setUrl} />
+      <Button title="Login" onPress={() => login(url)} />
+    </Wrapper>
+  );
+};
 
 const LoginContainer: React.FC = ({ children }) => {
   return (
     <LoginProvider
-      domain="https://keycloak.mortenolsen.pro/auth/realms/master"
-      clientId="test"
       Login={LoginScreen} 
     >
       {children}
