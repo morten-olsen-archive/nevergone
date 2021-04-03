@@ -34,5 +34,5 @@ jobs:
       - name: Install Packages
         run: npm i -g yarn && yarn install
       - name: Expo Publish Channel
-        run: expo publish --non-interactive --release-channel latest
+        run: expo publish --non-interactive
         working-directory: packages/client
