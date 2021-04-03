@@ -30,9 +30,10 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install Packages
-        run: npm install
+        run: npm i -g yarn && yarn install
       - name: Expo Publish Channel
         run: expo publish --non-interactive --release-channel pr${{ github.event.number }}
+        working-directory: packages/client
       - name: Add Comment To PR
         uses: mshick/add-pr-comment@v1
         env:
