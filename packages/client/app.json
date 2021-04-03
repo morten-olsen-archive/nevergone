@@ -3,6 +3,7 @@
     "name": "Nevergone",
     "slug": "nevergone",
     "version": "1.0.0",
+    "scheme": "nevergone",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

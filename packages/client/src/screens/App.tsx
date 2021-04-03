@@ -8,6 +8,7 @@ import ResourceScreen from './resource/Details';
 import TypesScreen from './type/List';
 import AddTypeScreen from './type/Add';
 import TypeDetailsScreen from './type/Details';
+import SettingsOverviewScreen from './settings/Overview';
 import Login from 'containers/Login';
 import Api from 'containers/Api';
 
@@ -29,6 +30,7 @@ const TabNavigator = () => (
   <Tab.Navigator>
     <Tab.Screen name="Resources" component={ResourcesScreen} />
     <Tab.Screen name="Types" component={TypesScreen} />
+    <Tab.Screen name="Settings" component={SettingsOverviewScreen} />
   </Tab.Navigator>
 );
 

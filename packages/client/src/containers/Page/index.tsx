@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import Row, { Icon } from 'components/Row';
+import { Platform, StatusBar } from "react-native";
 
 interface Props {
   topActions?: {
@@ -16,6 +17,7 @@ interface Props {
 const Wrapper = styled.SafeAreaView`
   flex: 1;
   background: #fff;
+  paddingTop: ${Platform.OS === 'android' ? StatusBar.currentHeight : 0 }px;
 `;
 
 const Page: React.FC<Props> = ({

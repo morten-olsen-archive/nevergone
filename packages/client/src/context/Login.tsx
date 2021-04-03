@@ -1,24 +1,35 @@
 import React, { createContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as WebBrowser from 'expo-web-browser';
-import { makeRedirectUri, useAuthRequest, useAutoDiscovery, exchangeCodeAsync, TokenResponse } from 'expo-auth-session';
+import {
+  makeRedirectUri,
+  exchangeCodeAsync,
+  TokenResponse,
+  fetchDiscoveryAsync,
+  refreshAsync,
+  revokeAsync,
+  AuthRequest,
+} from 'expo-auth-session';
 import { Platform } from 'react-native';
 
 interface LoginContextValue {
-  token: string;
   getToken: () => Promise<string>;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 interface LoginProps {
-  login: () => void;
+  login: (url: string) => void;
   loading: boolean;
+  error?: any;
+}
+
+interface Session {
+  domain: string;
+  token: TokenResponse;
 }
 
 interface Props {
-  domain: string;
-  clientId: string;
   children: ReactNode;
   Login: React.FC<LoginProps>
 }
@@ -26,7 +37,6 @@ interface Props {
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginContext = createContext<LoginContextValue>({
-  token: undefined as any,
   getToken: async () => '',
   refresh: async () => {},
   logout: async () => {},
@@ -34,10 +44,11 @@ const LoginContext = createContext<LoginContextValue>({
 
 const useProxy = Platform.select({ web: false, default: true });
 
-const LoginProvider: React.FC<Props> = ({ domain, clientId, children, Login }) => {
-  const storageKey = `token_${domain}_${clientId}`;
-  const [token, setToken] = useState<TokenResponse | undefined>(undefined);
-  const discovery = useAutoDiscovery(domain);
+const LoginProvider: React.FC<Props> = ({ children, Login }) => {
+  const storageKey = `session`;
+  const [session, setSession] = useState<Session | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<any | undefined>();
   const redirectUri = useMemo(
     () => makeRedirectUri({
         // For usage in bare and standalone
@@ -52,30 +63,36 @@ const LoginProvider: React.FC<Props> = ({ domain, clientId, children, Login }) =
       const current = await AsyncStorage.getItem(storageKey);
       if (!current) return;
       const parsed = JSON.parse(current);
-      setToken(parsed);
+      const session = {
+        ...parsed,
+        token: new TokenResponse(parsed.token)
+      };
+      setSession(session);
     };
 
     run();
-  }, [domain, clientId]);
+  }, []);
 
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      clientId: clientId,
-      scopes: ['openid', 'profile'],
-      // For usage in managed apps using the proxy
-      redirectUri,
-      usePKCE: false,
-    },
-    discovery
-  );
-
-  const logout = useCallback(async () => {}, []);
-  const refresh = useCallback(async () => {}, []);
-  const getToken = useCallback(async () => token!.accessToken, [token]);
-
-  useEffect(() => {
+  const login = useCallback((url: string) => {
+    setError(undefined);
+    setLoading(true);
     const run = async () => {
-      if (response?.type === 'success' && response.params.code && discovery) {
+      const configRequest = await fetch(`${url}/auth/config`);
+      const { domain, clientId } = await configRequest.json();
+      const discovery = await fetchDiscoveryAsync(domain);
+      const request = new AuthRequest({
+        clientId,
+        responseType: 'code',
+        redirectUri,
+        usePKCE: false,
+      });
+      const response = await request.promptAsync(discovery, {
+        useProxy,
+      });
+      if (response.type === 'error') {
+        throw new Error(response.error?.toString() || 'Login failed');
+      }
+      if (response.type === 'success') {
         const { code: newCode } = response.params;
         
         const token = await exchangeCodeAsync({
@@ -84,19 +101,52 @@ const LoginProvider: React.FC<Props> = ({ domain, clientId, children, Login }) =
           clientId,
         }, discovery);
         
-        setToken(token);
-        await AsyncStorage.setItem(storageKey, JSON.stringify(token));
+        setLoading(false);
+        setSession({
+          domain,
+          token
+        });
+        await AsyncStorage.setItem(storageKey, JSON.stringify({
+          domain,
+          token
+        }));
       }
     };
 
-    run();
-  }, [response, discovery]);
+    run().catch((err) => {
+      setError(err);
+      setLoading(false);
+    });
+  }, []);
 
-  if (!token) {
+  const logout = useCallback(async () => {
+    if (!session) return;
+    await AsyncStorage.removeItem(storageKey);
+    const discovery = await fetchDiscoveryAsync(session.domain);
+    revokeAsync({
+      token: session.token.refreshToken!,
+    }, discovery);
+    setSession(undefined);
+  }, [session]);
+
+  const refresh = useCallback(async () => {
+    if (!session) return;
+    const configRequest = await fetch(`${session.domain}/auth/config`);
+    const { domain, clientId } = await configRequest.json();
+    const discovery = await fetchDiscoveryAsync(domain);
+    session?.token.refreshAsync({
+      clientId,
+    }, discovery);
+  }, [session]);
+  const getToken = useCallback(async () => session!.token.accessToken, [session]);
+
+
+  if (!session) {
     return (
       <Login
-        login={() => promptAsync({ useProxy })}
-        loading={!!request}
+        login={login}
+        loading={loading}
+        error={error}
       />
     );
   }
@@ -104,7 +154,6 @@ const LoginProvider: React.FC<Props> = ({ domain, clientId, children, Login }) =
   return (
     <LoginContext.Provider
       value={{
-        token: token.accessToken,
         getToken,
         refresh,
         logout,

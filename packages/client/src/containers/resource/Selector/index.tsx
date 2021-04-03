@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import EditRow from 'components/EditRow';
 import ResourceSelectorModal from '../SelectorModal';
 import ListItem from 'compositions/resource/ListItem';
+import { Body } from 'typography';
 
 interface Props {
   title?: string;
@@ -21,7 +22,7 @@ const ResourceSelectorContainer: React.FC<Props> = ({ title, value, onValueChang
     <>
       <EditRow title={title} onEdit={() => setOpen(true)}>
         {!value && (
-          <div>None</div>
+          <Body>None</Body>
         )}
         {value && (
           <ListItem 

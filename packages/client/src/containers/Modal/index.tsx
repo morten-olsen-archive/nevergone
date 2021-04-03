@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import Row, { Icon } from 'components/Row';
+import { Platform, StatusBar } from "react-native";
 
 interface Props {
   actions?: {
@@ -24,11 +25,11 @@ const Wrapper = styled.View`
   shadow-opacity: 0.30;
   shadow-radius: 16px;
   elevation: 25
-  margin-top: 10px;
   padding-top: 10px;
   padding-bottom: 30px;
   flex: 1;
   background: #fff;
+  marginTop: ${Platform.OS === 'android' ? StatusBar.currentHeight : 10 }px;
 `;
 
 const Content = styled.View`

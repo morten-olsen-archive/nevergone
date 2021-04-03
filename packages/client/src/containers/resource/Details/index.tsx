@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import ResourceSelector from '../Selector';
 import ListItem from 'compositions/resource/ListItem';
