@@ -6,7 +6,6 @@ on:
 jobs:
   deploy_branch_preview:
     name: Deploy Branch Preview
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

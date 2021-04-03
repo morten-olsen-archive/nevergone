@@ -2,7 +2,7 @@ name: PR to Docker Hub
 on:
   pull_request:
 jobs:
-  build:
+  buildpr:
     runs-on: ubuntu-latest
 
     steps:
