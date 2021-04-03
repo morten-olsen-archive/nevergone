@@ -24,7 +24,7 @@ const Wrapper = styled(Cell)`
 `;
 
 const Main = styled(Cell)`
-  align-items: left;
+  align-items: stretch;
   flex: 1;
 `;
 

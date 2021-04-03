@@ -8,6 +8,8 @@ import ResourceScreen from './resource/Details';
 import TypesScreen from './type/List';
 import AddTypeScreen from './type/Add';
 import TypeDetailsScreen from './type/Details';
+import Login from 'containers/Login';
+import Api from 'containers/Api';
 
 const options = {
   headerShown: false,
@@ -31,14 +33,18 @@ const TabNavigator = () => (
 );
 
 const App = () => (
-  <NavigationContainer>
-    <RootStack.Navigator mode="modal">
-      <RootStack.Screen options={options} name="Main" component={TabNavigator} />
-      <RootStack.Screen options={options} name="AddResource" component={AddResourceScreen} />
-      <RootStack.Screen options={options} name="Resource" component={ResourceNavigator} />
-      <RootStack.Screen options={options} name="AddType" component={AddTypeScreen} />
-      <RootStack.Screen options={options} name="Type" component={TypeDetailsScreen} />
-    </RootStack.Navigator>
-  </NavigationContainer>
+  <Login>
+    <Api>
+      <NavigationContainer>
+        <RootStack.Navigator mode="modal">
+          <RootStack.Screen options={options} name="Main" component={TabNavigator} />
+          <RootStack.Screen options={options} name="AddResource" component={AddResourceScreen} />
+          <RootStack.Screen options={options} name="Resource" component={ResourceNavigator} />
+          <RootStack.Screen options={options} name="AddType" component={AddTypeScreen} />
+          <RootStack.Screen options={options} name="Type" component={TypeDetailsScreen} />
+        </RootStack.Navigator>
+      </NavigationContainer>
+    </Api>
+  </Login>
 ); 
 export default App;

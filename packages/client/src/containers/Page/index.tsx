@@ -13,7 +13,7 @@ interface Props {
   children: ReactNode;
 }
 
-const Wrapper = styled.View`
+const Wrapper = styled.SafeAreaView`
   flex: 1;
   background: #fff;
 `;

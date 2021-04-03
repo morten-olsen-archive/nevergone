@@ -81,20 +81,14 @@ const ResourceContainer: React.FC<Props> = ({ id, goToResource }) => {
 
   console.log(data);
 
-  if (!data) {
-    return <Text>Loading</Text>
-  }
+  let output = <></>;
 
-  return (
-    <Modal
-      title={data.resource.name}
-      actions={[{
-        icon: 'trash',
-        name: 'Delete',
-        onPress: () => remove(),
-      }]}
-    >
-      <View>
+
+  if (!data) {
+    output = <Text>Loading</Text>
+  } else {
+    output = (
+      <>
         <Row title="Type">
           <TypeListItem item={data.resource.type} />
         </Row>
@@ -121,7 +115,21 @@ const ResourceContainer: React.FC<Props> = ({ id, goToResource }) => {
           onClose={() => setAddOpen(false)}
           onSelect={(resource) => assign({ variables: { id: resource.id, assignTo: id } })}
         />
-      </View>
+      </>
+    );
+  }
+
+
+  return (
+    <Modal
+      title={data ? data.resource.name : 'loading'}
+      actions={[{
+        icon: 'trash',
+        name: 'Delete',
+        onPress: () => remove(),
+      }]}
+    >
+      {output}
     </Modal>
   );
 }

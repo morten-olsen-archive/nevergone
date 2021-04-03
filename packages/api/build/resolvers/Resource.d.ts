@@ -1,0 +1,33 @@
+import Resource from '../schemas/Resource';
+import DBService from '../services/DBService';
+import * as tables from '../data/tables';
+import Document from '../schemas/Document';
+import ResourceField from '../schemas/ResourceField';
+import ResourceService, { ResourceInput, ResourceFieldInput, SearchInput } from '../services/ResourceService';
+import ResourceTypeService from '../services/ResourceTypeService';
+import { PaginationInput } from '../schemas/Pagination';
+import ResourceType from '../schemas/ResourceType';
+declare class ResourceResolver {
+    private readonly dbService;
+    private readonly resourceService;
+    private readonly resourceTypeService;
+    constructor(dbService: DBService, resourceService: ResourceService, resourceTypeService: ResourceTypeService);
+    private get db();
+    resource(id: string): Promise<Resource[]>;
+    resources(input: SearchInput, pagination: PaginationInput): Promise<Resource[]>;
+    typeId(resource: Resource): Promise<string>;
+    type(resource: Resource): Promise<ResourceType>;
+    assignedToId(resource: Resource): Promise<string | undefined>;
+    assignedTo(resource: Resource): Promise<Resource | undefined>;
+    assignments(resource: Resource): Promise<Resource[]>;
+    fields(resource: Resource): Promise<ResourceField[]>;
+    totalPrice(currency: string, resource: Resource): Promise<number>;
+    documents(resource: Resource): Promise<Document[]>;
+    addResources(resource: ResourceInput, quantity: number, fields: ResourceFieldInput[]): Promise<Resource>;
+    deleteResource(resourceId: string): Promise<boolean>;
+    assignResource(resourceId: string, assignTo?: string): Promise<tables.Resource | undefined>;
+    addDocumentsToResource(resourceId: string, documentIds: string[]): Promise<tables.Resource | undefined>;
+    removeDocumentFromResource(resourceId: string, documentId: string): Promise<tables.Resource | undefined>;
+    setResourceStatus(resourceId: string, status?: string): Promise<tables.Resource | undefined>;
+}
+export default ResourceResolver;

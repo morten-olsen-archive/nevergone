@@ -15,12 +15,16 @@ interface Props {
 
 const Background = styled.View`
   flex: 1;
-  background: rgba(0, 0, 0, .6);
 `;
 
 const Wrapper = styled.View`
   border-radius: 30px;
   bottom: -30px;
+  shadow-color: rgba(0, 0, 0, 1);
+  shadow-opacity: 0.30;
+  shadow-radius: 16px;
+  elevation: 25
+  margin-top: 10px;
   padding-top: 10px;
   padding-bottom: 30px;
   flex: 1;

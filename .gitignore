@@ -3,3 +3,6 @@
 /packages/*/node_modules
 /*.log
 /packages/*/*.log
+/packages/client/__generated__
+/packages/client/.expo
+/packages/api/data

@@ -1,23 +1,24 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import Row, { Icon, Cell } from 'components/Row';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Input = styled.TextInput`
   flex: 1;
-  outline: none;
+  margin-left: 15px;
 `;
 
 const Wrapper = styled.View`
   background: #eee;
-  margin: 10px 50px;
+  margin: 0px 20px;
   flex-direction: row;
-  align-items: left;
+  align-items: center;
+  padding: 10px;
   border-radius: 20px;
 `;
 
 const Search = () => (
   <Wrapper>
-    <Icon name="search-outline" />
+    <Icon name="search-outline" size={18} />
     <Input placeholder="Search" />
   </Wrapper>
 );

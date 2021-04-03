@@ -1,13 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": [
-    "./src",
-    "./tools"
-  ],
   "compilerOptions": {
-    "outDir": "./dist",
-    "jsx": "react",
-    "composite": true,
-    "baseUrl": "./src"
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-native",
+    "lib": ["dom", "esnext"],
+    "baseUrl": "./src",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "strict": true
   }
 }
+

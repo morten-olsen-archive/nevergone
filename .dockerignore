@@ -1,0 +1,9 @@
+/node_modules
+/packages/*/dist
+/packages/*/node_modules
+/*.log
+/packages/*/*.log
+/packages/*/build
+/packages/client/__generated__
+/packages/client/.expo
+/Dockerfile
